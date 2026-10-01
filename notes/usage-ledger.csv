@@ -37,3 +37,6 @@ ts,session,phase,provider,model,effort,ctx_pct,five_h_pct,weekly_pct
 2026-10-01T14:27:20Z,8915d99a,tickets,anthropic,Opus 5.5,high,13.0,14,6
 2026-10-01T14:36:33Z,8915d99a,tickets,anthropic,Opus 5.5,high,16.0,17,6
 2026-10-01T14:38:11Z,8915d99a,tickets,anthropic,Opus 5.5,high,16.0,17,6
+2026-10-01T14:39:11Z,8915d99a,tickets,anthropic,Opus 5.5,high,16.0,17,6
+2026-10-01T14:40:13Z,471cc78b,tickets,anthropic,Opus 5.5,high,3.0,18,7
+2026-10-01T14:40:32Z,471cc78b,tickets,anthropic,Opus 5.5,high,3.0,18,7
