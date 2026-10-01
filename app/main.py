@@ -9,12 +9,13 @@ them here. Keep this file small.
 """
 from __future__ import annotations
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, Response
 from starlette.middleware.sessions import SessionMiddleware
 
 from app import accounts, content, publish, settings
-from app.routes import auth, posts
+from app.routes import auth, pages, posts
+from app.templating import templates
 
 
 def create_app() -> FastAPI:
@@ -28,6 +29,13 @@ def create_app() -> FastAPI:
                        same_site="lax", https_only=False)
     app.include_router(auth.router)
     app.include_router(posts.router)
+    app.include_router(pages.router)
+
+    @app.exception_handler(accounts.NoPermission)
+    def no_permission(request: Request, exc: accounts.NoPermission):
+        return templates.TemplateResponse(
+            request, "admin/no_permission.html",
+            {"title": "No permission", "home_path": "/admin"}, status_code=403)
 
     # The local preview of the public site: the same renderers the export uses,
     # at the same relative paths, so it shows Published content only.
@@ -38,6 +46,13 @@ def create_app() -> FastAPI:
     @app.get("/style.css")
     def public_css():
         return Response(publish.CSS, media_type="text/css")
+
+    @app.get("/{link}.html", response_class=HTMLResponse)
+    def public_page(link: str):
+        page = publish.render_page(link)
+        if page is None:
+            raise HTTPException(status_code=404, detail="No such Page.")
+        return page
 
     @app.get("/posts/index.html", response_class=HTMLResponse)
     def public_past():

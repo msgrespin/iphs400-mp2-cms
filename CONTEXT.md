@@ -71,7 +71,7 @@ The list of older Published Posts that Visitors reach from Home. It is not a Pag
 A Post or Page still being written, which Visitors cannot see.
 
 **Published**:
-The status an Officer gives a Post or Page when it is ready for Visitors. Published content reaches Visitors only at the next Go live.
+The status an Officer gives a Post or Page when it is ready for Visitors. Published content reaches Visitors only at the next Go live. An Editor sets this on a Post; only an Admin sets it on a Page.
 
 **Go live**:
 The step, done by the Co-VPs, that puts everything Published onto the public site.
@@ -81,5 +81,5 @@ _Avoid_: deploy, export
 A change made since the last Go live, which Visitors therefore cannot see.
 
 **Link**:
-The web address of a Post, made from its date and title. It stops changing once the Post is Published, so a Link sent in a Weekly email keeps working.
+The web address of a Post or a Page. A Post's Link is made from its date and title, and it stops changing once the Post is Published, so a Link sent in a Weekly email keeps working. A Page's Link is made from its title and stays the same if the title is changed; Home's Link is `index` because Home is the site's front file.
 _Avoid_: slug, permalink (in anything an Officer sees)

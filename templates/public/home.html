@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
   <h1>{{ title }}</h1>
+  <section>
+    {{ home.body_html }}
+  </section>
   {% if latest %}
   <article>
     <h2>{{ latest.title }}</h2>

@@ -4,8 +4,8 @@
     uv run python scripts/seed_demo.py
 
 Creates the four demo Accounts (passwords read from the environment, never
-hard-coded). Later tickets extend it with the three Pages and a few Posts, at
-least one Draft and one Published.
+hard-coded), the three Pages, and a few Posts, at least one Draft and one
+Published.
 
 The rubric expects this to run clean on a fresh clone with .env.example values
 (item E4), because the database itself is never committed.
@@ -33,7 +33,8 @@ def main() -> int:
     print("Demo Accounts ready: Co-VP, Social Chair, Co-President, Treasurer.")
     content.seed_demo_posts()
     print("Demo Posts ready: one Published, one Draft.")
-    # TODO (later tickets): create the three Pages.
+    content.seed_demo_pages()
+    print("Demo Pages ready: Home, About, Join & Snacks.")
     return 0
 
 

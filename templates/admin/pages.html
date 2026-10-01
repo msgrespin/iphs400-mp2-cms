@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+  <p><a href="/admin">Console</a> · <a href="/admin/posts">Posts</a></p>
+  <h1>Pages</h1>
+  {% include "admin/_flash.html" %}
+  {% if account.role == "admin" %}<p><a href="/admin/pages/new">Create a new Page</a></p>{% endif %}
+  <table>
+    <thead><tr><th>Title</th><th>Status</th><th>Link</th><th>Updated</th><th></th></tr></thead>
+    <tbody>
+    {% for page in pages %}
+      <tr>
+        <td><a href="/admin/pages/{{ page.id }}/edit">{{ page.title }}</a></td>
+        <td>{{ "Published" if page.status == "published" else "Draft" }}</td>
+        <td><code>{{ page.link }}</code></td>
+        <td>{{ eastern(page.updated_at) }}</td>
+        <td>
+        {% if account.role == "admin" %}
+          {% if page.is_home %}
+          Always published
+          {% else %}
+          <form method="post" action="/admin/pages/{{ page.id }}/{{ 'unpublish' if page.status == 'published' else 'publish' }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <button type="submit">{{ "Set back to Draft" if page.status == "published" else "Publish" }}</button>
+          </form>
+          <a href="/admin/pages/{{ page.id }}/delete">Delete</a>
+          {% endif %}
+        {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

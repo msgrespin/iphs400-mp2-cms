@@ -8,6 +8,14 @@
 </head>
 <body>
   <header><a href="{{ home_path | default('index.html') }}">{{ title }}</a></header>
+  {% if nav %}
+  <nav aria-label="Site">
+    <ul>
+      {% for item in nav %}<li><a href="{{ item.href }}">{{ item.title }}</a></li>
+      {% endfor %}
+    </ul>
+  </nav>
+  {% endif %}
   <main>{% block content %}{% endblock %}</main>
   <footer><small>IPHS 400 Mini-Project #2</small></footer>
 </body>

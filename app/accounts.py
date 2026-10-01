@@ -14,7 +14,7 @@ from typing import Iterator
 
 from argon2 import PasswordHasher
 from argon2.exceptions import InvalidHashError, VerificationError
-from fastapi import HTTPException, Request
+from fastapi import Depends, HTTPException, Request
 
 from app import settings
 
@@ -136,6 +136,10 @@ async def require_csrf(request: Request) -> None:
         raise HTTPException(status_code=403, detail="Invalid or missing CSRF token.")
 
 
+class NoPermission(Exception):
+    """A signed-in Account asked for something its Role may not do."""
+
+
 def require_account(request: Request) -> sqlite3.Row:
     """Guard: must be signed in. Anonymous requests go to the sign-in screen."""
     account_id = request.session.get("account_id")
@@ -143,4 +147,11 @@ def require_account(request: Request) -> sqlite3.Row:
     if account is None:
         request.session.pop("account_id", None)
         raise HTTPException(status_code=303, headers={"Location": "/login"})
+    return account
+
+
+def require_admin(account: sqlite3.Row = Depends(require_account)) -> sqlite3.Row:
+    """Guard: must be an Admin. A signed-in Editor gets the "no permission" screen."""
+    if account["role"] != "admin":
+        raise NoPermission()
     return account

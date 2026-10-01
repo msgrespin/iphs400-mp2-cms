@@ -1,6 +1,6 @@
 """Render the public site into site/ as plain HTML.
 
-Only PUBLISHED Posts are written here. A draft that reaches site/ is a bug.
+Only PUBLISHED Posts and Pages are written here. A draft that reaches site/ is a bug.
 Every href and src is RELATIVE ("style.css", "posts/x.html", "../style.css"),
 never root-absolute, because Pages serves this from a subfolder.
 
@@ -22,6 +22,7 @@ CSS = """/* Public site styles. */
 :root { color-scheme: light dark; }
 body { font: 16px/1.6 system-ui, sans-serif; margin: 0 auto; max-width: 42rem; padding: 1rem; }
 header a { font-weight: 700; text-decoration: none; }
+nav ul { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; list-style: none; margin: 0.5rem 0 0; padding: 0; }
 main { margin-block: 2rem; }
 article { overflow-wrap: anywhere; }
 .date { margin-block: 0 1rem; opacity: 0.75; }
@@ -42,28 +43,55 @@ def _view(row) -> dict:
             "body_html": Markup(markdown.render(row["body"]))}
 
 
-def _render(template: str, depth: int, **context) -> str:
+def _file_name(page) -> str:
+    """Home is the site root; every other Page is named by its Link."""
+    return "index.html" if page["is_home"] else f"{page['link']}.html"
+
+
+def _render(template: str, depth: int, pages, **context) -> str:
+    """Render a public page. Every one gets the same navigation, with paths that
+    climb `depth` folders to reach the Pages."""
     up = "../" * depth
+    nav = [{"title": page["title"], "href": f"{up}{_file_name(page)}"} for page in pages]
     return environment().get_template(template).render(
         title=settings.SITE_TITLE, css_path=f"{up}style.css",
-        home_path=f"{up}index.html", **context)
+        home_path=f"{up}index.html", nav=nav, **context)
 
 
-def render_front(rows=None) -> str:
+def _page_view(page) -> dict:
+    return {"title": page["title"], "body_html": Markup(markdown.render(page["body"]))}
+
+
+def render_front(rows=None, pages=None) -> str:
     posts = content.published_posts() if rows is None else rows
-    return _render("public/home.html", 0, latest=_view(posts[0]) if posts else None,
+    pages = content.published_pages() if pages is None else pages
+    return _render("public/home.html", 0, pages,
+                   home=_page_view(content.home_page()),
+                   latest=_view(posts[0]) if posts else None,
                    past_href="posts/index.html")
 
 
-def render_past(rows=None) -> str:
+def render_page(link: str, pages=None, rows=None) -> str | None:
+    pages = content.published_pages() if pages is None else pages
+    for page in pages:
+        if page["link"] == link:
+            if page["is_home"]:
+                return render_front(rows, pages)
+            return _render("public/page.html", 0, pages, page=_page_view(page))
+    return None
+
+
+def render_past(rows=None, pages=None) -> str:
     posts = content.published_posts() if rows is None else rows
-    return _render("public/past.html", 1, posts=[_view(row) for row in posts[1:]])
+    pages = content.published_pages() if pages is None else pages
+    return _render("public/past.html", 1, pages, posts=[_view(row) for row in posts[1:]])
 
 
-def render_post(link: str, rows=None) -> str | None:
+def render_post(link: str, rows=None, pages=None) -> str | None:
+    pages = content.published_pages() if pages is None else pages
     for row in (content.published_posts() if rows is None else rows):
         if row["link"] == link:
-            return _render("public/post.html", 1, post=_view(row),
+            return _render("public/post.html", 1, pages, post=_view(row),
                            past_href="index.html")
     return None
 
@@ -71,15 +99,20 @@ def render_post(link: str, rows=None) -> str | None:
 def render_site(out: Path | None = None) -> Path:
     out = out or settings.SITE
     rows = content.published_posts()
+    nav_pages = content.published_pages()
     # Render everything before touching the folder, so a failure leaves the
     # previous site/ in place instead of an empty one.
-    pages = {"index.html": render_front(rows), "posts/index.html": render_past(rows)}
+    files = {"index.html": render_front(rows, nav_pages),
+             "posts/index.html": render_past(rows, nav_pages)}
+    for page in nav_pages:
+        if not page["is_home"]:
+            files[_file_name(page)] = render_page(page["link"], nav_pages, rows)
     for row in rows:
-        pages[f"posts/{row['link']}.html"] = render_post(row["link"], rows)
+        files[f"posts/{row['link']}.html"] = render_post(row["link"], rows, nav_pages)
     if out.exists():
         shutil.rmtree(out)
     (out / "posts").mkdir(parents=True)
     (out / "style.css").write_text(CSS)
-    for name, html in pages.items():
+    for name, html in files.items():
         (out / name).write_text(html)
     return out
