@@ -18,7 +18,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from app import accounts  # noqa: E402
+from app import accounts, content  # noqa: E402
 
 
 def main() -> int:
@@ -31,7 +31,9 @@ def main() -> int:
 
     accounts.seed_demo_accounts(admin_pw, editor_pw)
     print("Demo Accounts ready: Co-VP, Social Chair, Co-President, Treasurer.")
-    # TODO (later tickets): create the three Pages and a few Posts.
+    content.seed_demo_posts()
+    print("Demo Posts ready: one Published, one Draft.")
+    # TODO (later tickets): create the three Pages.
     return 0
 
 

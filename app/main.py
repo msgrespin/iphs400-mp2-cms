@@ -12,13 +12,14 @@ from __future__ import annotations
 from fastapi import FastAPI, Request
 from starlette.middleware.sessions import SessionMiddleware
 
-from app import accounts, settings
-from app.routes import auth
+from app import accounts, content, settings
+from app.routes import auth, posts
 from app.templating import templates
 
 
 def create_app() -> FastAPI:
     accounts.init_db()
+    content.init_db()
     app = FastAPI(title="IPHS 400 MP2 CMS")
     # max_age=None: a session cookie with no Expires/Max-Age, so it ends when the
     # browser closes.
@@ -26,6 +27,7 @@ def create_app() -> FastAPI:
                        session_cookie="session", max_age=None,
                        same_site="lax", https_only=False)
     app.include_router(auth.router)
+    app.include_router(posts.router)
 
     @app.get("/")
     def public_home(request: Request):

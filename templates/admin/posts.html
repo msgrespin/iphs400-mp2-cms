@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+  <p><a href="/admin">Console</a></p>
+  <h1>Posts</h1>
+  {% include "admin/_flash.html" %}
+  <p><a href="/admin/posts/new">Write a new Post</a></p>
+  {% if posts %}
+  <table>
+    <thead><tr><th>Title</th><th>Status</th><th>Author</th><th>Updated</th><th></th></tr></thead>
+    <tbody>
+    {% for post in posts %}
+      <tr>
+        <td><a href="/admin/posts/{{ post.id }}/edit">{{ post.title }}</a></td>
+        <td>{{ "Published" if post.status == "published" else "Draft" }}</td>
+        <td>{{ post.author }}</td>
+        <td>{{ eastern(post.updated_at) }}</td>
+        <td>
+          <form method="post" action="/admin/posts/{{ post.id }}/{{ 'unpublish' if post.status == 'published' else 'publish' }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <button type="submit">{{ "Set back to Draft" if post.status == "published" else "Publish" }}</button>
+          </form>
+          <a href="/admin/posts/{{ post.id }}/delete">Delete</a>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p>No Posts yet.</p>
+  {% endif %}
+{% endblock %}
