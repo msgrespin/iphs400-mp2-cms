@@ -5,7 +5,7 @@
   {% include "admin/_flash.html" %}
   {% if page %}
   <p>Link: <code>{{ page.link }}</code> · {{ "Published" if page.status == "published" else "Draft" }}{% if page.is_home %} (Home is always published){% endif %}</p>
-  <p>Created {{ eastern(page.created_at) }} · Updated {{ eastern(page.updated_at) }}</p>
+  <p>Author: {{ page.author or "—" }} · Created {{ eastern(page.created_at) }} · Updated {{ eastern(page.updated_at) }}</p>
   {% endif %}
   <form method="post" action="{{ '/admin/pages/%d' % page.id if page else '/admin/pages' }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token }}">

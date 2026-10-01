@@ -444,3 +444,71 @@ def test_a_missing_page_is_a_404(client_as):
 
 def test_the_console_front_door_links_to_pages(client_as):
     assert PAGES in client_as("editor").get("/admin").text
+
+
+# --- Author -------------------------------------------------------------------
+
+def author_cell(c, title):
+    """The Author column text in the list row for this Page."""
+    row = re.search(rf"<tr>(?:(?!</tr>).)*{re.escape(title)}.*?</tr>",
+                    c.get(PAGES).text, re.DOTALL).group(0)
+    return re.findall(r"<td[^>]*>(.*?)</td>", row, re.DOTALL)[2].strip()
+
+
+def test_the_pages_list_shows_the_position_that_created_each_page(client_as):
+    new_page(client_as("admin"), "Meetings")
+    editor_list = client_as("editor")
+    assert author_cell(editor_list, "Meetings") == "Co-VP"
+
+
+def test_the_edit_screen_shows_the_author(client_as):
+    c = client_as("admin")
+    page_id = new_page(c, "Meetings")
+    assert "Author: Co-VP" in c.get(f"{PAGES}/{page_id}/edit").text
+
+
+def test_editing_a_page_does_not_change_its_author(client_as):
+    page_id = new_page(client_as("admin"), "Meetings")
+    edit_page(client_as("editor"), page_id, body="Changed by an Editor")
+    assert author_cell(client_as("admin"), "Meetings") == "Co-VP"
+
+
+def test_seed_gives_the_three_pages_the_co_vp_as_author(tmp_path):
+    db = tmp_path / "seed.db"
+    assert run_seed(db).returncode == 0
+    authors = rows(db, "select title, display_name from pages"
+                       " join accounts on accounts.id = pages.author_id order by pages.id")
+    assert authors == [("Home", "Co-VP"), ("About", "Co-VP"), ("Join & Snacks", "Co-VP")]
+
+
+def test_home_made_before_any_account_exists_has_no_author_and_still_lists(client_as):
+    assert author_cell(client_as("admin"), "Home") in ("", "—")
+
+
+def test_no_author_or_position_name_appears_in_any_exported_page(client_as, tmp_path):
+    c = client_as("editor")
+    new_page(client_as("admin"), "About", body="Who we are")
+    publish_page(client_as("admin"), max(page_ids(c)))
+    for name, text in read_all(export(tmp_path)).items():
+        assert "Social Chair" not in text and "Co-VP" not in text, name
+
+
+def test_an_existing_database_without_the_author_column_is_upgraded(tmp_path, monkeypatch):
+    import sqlite3
+
+    from app import content
+
+    old = tmp_path / "old.db"
+    with sqlite3.connect(old) as conn:
+        conn.execute("create table pages (id integer primary key, title text not null,"
+                     " link text not null unique, body text not null default '',"
+                     " status text not null default 'draft', is_home integer not null"
+                     " default 0, created_at text not null, updated_at text not null,"
+                     " first_published_at text)")
+        conn.execute("insert into pages (title, link, body, status, is_home, created_at,"
+                     " updated_at) values ('Home', 'index', 'kept', 'published', 1, 'a', 'b')")
+    monkeypatch.setattr(settings, "DATABASE_PATH", old)
+    content.init_db()
+    content.init_db()  # twice: the upgrade must be repeatable
+    home = content.home_page()
+    assert home["body"] == "kept" and home["author_id"] is None

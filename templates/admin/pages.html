@@ -5,12 +5,13 @@
   {% include "admin/_flash.html" %}
   {% if account.role == "admin" %}<p><a href="/admin/pages/new">Create a new Page</a></p>{% endif %}
   <table>
-    <thead><tr><th>Title</th><th>Status</th><th>Link</th><th>Updated</th><th></th></tr></thead>
+    <thead><tr><th>Title</th><th>Status</th><th>Author</th><th>Link</th><th>Updated</th><th></th></tr></thead>
     <tbody>
     {% for page in pages %}
       <tr>
         <td><a href="/admin/pages/{{ page.id }}/edit">{{ page.title }}</a></td>
         <td>{{ "Published" if page.status == "published" else "Draft" }}</td>
+        <td>{{ page.author or "—" }}</td>
         <td><code>{{ page.link }}</code></td>
         <td>{{ eastern(page.updated_at) }}</td>
         <td>

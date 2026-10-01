@@ -66,7 +66,7 @@ def new_page(request: Request, account=Depends(accounts.require_account)):
 def create_page(request: Request, title: str = Form(""), body: str = Form(""),
                 account=Depends(accounts.require_account)):
     try:
-        content.create_page(title, body)
+        content.create_page(title, body, account["id"])
     except content.EmptyTitle as problem:
         return form_screen(request, account, None, title, body, str(problem), 400)
     flash(request, f"Created Draft Page “{title.strip()}”.")

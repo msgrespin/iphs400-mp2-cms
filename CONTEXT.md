@@ -51,7 +51,7 @@ _Avoid_: announcement, update
 The weekly Monday Post about that night's Study Hall. Nearly every Post is one.
 
 **Author**:
-The Position whose Account wrote a Post. Officers see it; Visitors do not.
+The Position whose Account wrote a Post or created a Page. Officers see it; Visitors do not.
 
 **Weekly email**:
 The message Officers send by hand each week. Its text is the same as that week's Study Hall reminder, plus a link to the Post.

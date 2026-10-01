@@ -40,6 +40,7 @@ create table if not exists pages (
     body text not null default '',
     status text not null default 'draft' check (status in ('draft', 'published')),
     is_home integer not null default 0,
+    author_id integer references accounts(id),
     created_at text not null,
     updated_at text not null,
     first_published_at text
@@ -75,6 +76,10 @@ def init_db() -> None:
     with connect() as conn:
         conn.execute(SCHEMA)
         conn.execute(PAGE_SCHEMA)
+        # A database made before Pages had an Author gets the column added.
+        if "author_id" not in [c["name"] for c in conn.execute("pragma table_info(pages)")]:
+            conn.execute("alter table pages add column author_id integer"
+                         " references accounts(id)")
         if not conn.execute("select 1 from pages where is_home = 1").fetchone():
             stamp = _stamp()
             # "index" is the Link because Home is written to index.html.
@@ -186,22 +191,30 @@ def delete_post(post_id: int) -> bool:
 
 # --- Pages -----------------------------------------------------------------
 
+_PAGE_SELECT = ("select pages.*, accounts.display_name as author from pages"
+                " left join accounts on accounts.id = pages.author_id")
+_PAGE_ORDER = " order by pages.is_home desc, pages.created_at, pages.id"
+
+
 def list_pages() -> list[sqlite3.Row]:
     """Every Page, Home first, then in the order they were created."""
     init_db()
     with connect() as conn:
-        return conn.execute("select * from pages order by is_home desc, created_at, id"
-                            ).fetchall()
+        return conn.execute(_PAGE_SELECT + _PAGE_ORDER).fetchall()
 
 
 def published_pages() -> list[sqlite3.Row]:
-    """Published Pages in navigation order: Home first, then by creation."""
-    return [page for page in list_pages() if page["status"] == "published"]
+    """Published Pages in navigation order: Home first, then by creation.
+    No Author is selected, as with published_posts."""
+    init_db()
+    with connect() as conn:
+        return conn.execute("select * from pages where status = 'published'"
+                            + _PAGE_ORDER.replace("pages.", "")).fetchall()
 
 
 def get_page(page_id: int) -> sqlite3.Row | None:
     with connect() as conn:
-        return conn.execute("select * from pages where id = ?", (page_id,)).fetchone()
+        return conn.execute(_PAGE_SELECT + " where pages.id = ?", (page_id,)).fetchone()
 
 
 def home_page() -> sqlite3.Row:
@@ -210,15 +223,16 @@ def home_page() -> sqlite3.Row:
         return conn.execute("select * from pages where is_home = 1").fetchone()
 
 
-def create_page(title: str, body: str) -> int:
+def create_page(title: str, body: str, author_id: int | None) -> int:
     """Save a new Draft Page. Its Link is made from the title now and never changes."""
     title = _clean_title(title, "A Page needs a title.")
     stamp = _stamp()
     with connect() as conn:
         cur = conn.execute(
-            "insert into pages (title, link, body, created_at, updated_at)"
-            " values (?, ?, ?, ?, ?)",
-            (title, _unique_link_in(conn, "pages", _slug(title, "page")), body, stamp, stamp))
+            "insert into pages (title, link, body, author_id, created_at, updated_at)"
+            " values (?, ?, ?, ?, ?, ?)",
+            (title, _unique_link_in(conn, "pages", _slug(title, "page")), body, author_id,
+             stamp, stamp))
         return cur.lastrowid
 
 
@@ -262,9 +276,15 @@ def delete_page(page_id: int) -> bool:
 def seed_demo_pages() -> None:
     """Create About and Join & Snacks as Published Pages (Home already exists).
 
-    Safe to run twice: a Page that is already there is left alone.
+    The Co-VP is the Author of all three. Safe to run twice: a Page that is
+    already there is left alone.
     """
     init_db()
+    with connect() as conn:
+        row = conn.execute("select id from accounts where display_name = 'Co-VP'").fetchone()
+        author_id = row["id"] if row else None
+        # Home, and any Page made before Pages had an Author, has none yet.
+        conn.execute("update pages set author_id = ? where author_id is null", (author_id,))
     demo = [("About", "AWM at Kenyon holds a weekly Study Hall. Officers: Co-VP, "
                       "Co-President, Social Chair, and Treasurer."),
             ("Join & Snacks", "Fill out the Google Form to join or to request snacks. "
@@ -273,7 +293,7 @@ def seed_demo_pages() -> None:
         with connect() as conn:
             if conn.execute("select 1 from pages where title = ?", (title,)).fetchone():
                 continue
-        set_page_status(create_page(title, body), "published")
+        set_page_status(create_page(title, body, author_id), "published")
 
 
 def seed_demo_posts() -> None:
