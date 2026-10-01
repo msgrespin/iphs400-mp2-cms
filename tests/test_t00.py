@@ -5,10 +5,14 @@ door.
 """
 
 
-def test_admin_console_answers(client):
-    response = client.get("/admin")
-    assert response.status_code == 200
-    assert "hello admin" in response.text.lower()
+def test_admin_console_answers(client, client_as):
+    anonymous = client.get("/admin", follow_redirects=False)
+    assert anonymous.status_code in (302, 303)
+    assert anonymous.headers["location"] == "/login"
+
+    signed_in = client_as("admin").get("/admin")
+    assert signed_in.status_code == 200
+    assert "hello admin" in signed_in.text.lower()
 
 
 def test_public_home_answers(client):

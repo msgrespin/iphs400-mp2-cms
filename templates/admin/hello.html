@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
   <h1>T00: hello admin</h1>
-  <p>The stack works. Now build ticket T01.</p>
+  <p>Signed in as {{ account.display_name }}.</p>
+  <form method="post" action="/logout">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <button type="submit">Sign out</button>
+  </form>
 {% endblock %}
