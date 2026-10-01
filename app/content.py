@@ -61,6 +61,13 @@ def eastern(stamp: str | None) -> str:
     return when.astimezone(EASTERN).strftime("%Y-%m-%d %H:%M")
 
 
+def public_date(stamp: str) -> str:
+    """Show a stored UTC time as a Visitor sees it, e.g. 'Monday, October 5, 2026'."""
+    when = datetime.strptime(stamp, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+    when = when.astimezone(EASTERN)
+    return f"{when:%A, %B} {when.day}, {when.year}"
+
+
 def _slug(title: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", title.lower()).strip("-") or "post"
 
@@ -85,6 +92,16 @@ def list_posts() -> list[sqlite3.Row]:
     with connect() as conn:
         return conn.execute(f"{_SELECT} order by posts.created_at desc, posts.id desc"
                             ).fetchall()
+
+
+def published_posts() -> list[sqlite3.Row]:
+    """Published Posts, latest first by first-published time. No Author is selected."""
+    init_db()
+    with connect() as conn:
+        return conn.execute(
+            "select title, link, body, first_published_at from posts"
+            " where status = 'published'"
+            " order by first_published_at desc, id desc").fetchall()
 
 
 def get_post(post_id: int) -> sqlite3.Row | None:

@@ -9,12 +9,12 @@ them here. Keep this file small.
 """
 from __future__ import annotations
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import HTMLResponse, Response
 from starlette.middleware.sessions import SessionMiddleware
 
-from app import accounts, content, settings
+from app import accounts, content, publish, settings
 from app.routes import auth, posts
-from app.templating import templates
 
 
 def create_app() -> FastAPI:
@@ -29,12 +29,26 @@ def create_app() -> FastAPI:
     app.include_router(auth.router)
     app.include_router(posts.router)
 
-    @app.get("/")
-    def public_home(request: Request):
-        return templates.TemplateResponse(
-            request, "public/home.html",
-            {"title": settings.SITE_TITLE, "items": []},
-        )
+    # The local preview of the public site: the same renderers the export uses,
+    # at the same relative paths, so it shows Published content only.
+    @app.get("/", response_class=HTMLResponse)
+    def public_home():
+        return publish.render_front()
+
+    @app.get("/style.css")
+    def public_css():
+        return Response(publish.CSS, media_type="text/css")
+
+    @app.get("/posts/index.html", response_class=HTMLResponse)
+    def public_past():
+        return publish.render_past()
+
+    @app.get("/posts/{link}.html", response_class=HTMLResponse)
+    def public_post(link: str):
+        page = publish.render_post(link)
+        if page is None:
+            raise HTTPException(status_code=404, detail="No such Post.")
+        return page
 
     # Your ticket work plugs in here, e.g.
     #   from app.routes import posts

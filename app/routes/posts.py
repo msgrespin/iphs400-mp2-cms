@@ -4,7 +4,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 
-from app import accounts, content
+from app import accounts, content, markdown
 from app.templating import templates
 
 # require_account comes first so an anonymous POST is sent to sign-in, not
@@ -60,6 +60,14 @@ def create_post(request: Request, title: str = Form(""), body: str = Form(""),
         return form_error(request, "admin/post_form.html", None, title, body)
     flash(request, f"Created Draft “{title.strip()}”.")
     return RedirectResponse(LIST_URL, status_code=303)
+
+
+@router.post("/preview", response_class=HTMLResponse, dependencies=csrf)
+def preview_post(request: Request, title: str = Form(""), body: str = Form("")):
+    """Show the sanitized rendering of the form's text. Nothing is saved."""
+    # The local app serves the public stylesheet at /style.css.
+    return render(request, "admin/post_preview.html", preview_title=title.strip(),
+                  rendered=markdown.render(body), css_path="/style.css")
 
 
 @router.get("/{post_id}/edit", response_class=HTMLResponse)

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Past posts – {{ title }}{% endblock %}
+{% block content %}
+  <h1>Past posts</h1>
+  {% if posts %}
+  <ul>
+    {% for post in posts %}
+    <li><a href="{{ post.link }}.html">{{ post.title }}</a> <span class="date">{{ post.date }}</span></li>
+    {% endfor %}
+  </ul>
+  {% else %}
+    <p>No older posts yet.</p>
+  {% endif %}
+{% endblock %}

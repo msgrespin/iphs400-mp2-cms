@@ -1,9 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
   <h1>{{ title }}</h1>
-  {% if items %}
-    <ul>{% for item in items %}<li><a href="{{ item.href }}">{{ item.title }}</a></li>{% endfor %}</ul>
+  {% if latest %}
+  <article>
+    <h2>{{ latest.title }}</h2>
+    <p class="date">{{ latest.date }}</p>
+    {{ latest.body_html }}
+  </article>
   {% else %}
     <p>Nothing published yet.</p>
   {% endif %}
+  <p><a href="{{ past_href }}">Past posts</a></p>
 {% endblock %}

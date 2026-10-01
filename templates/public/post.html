@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}{{ post.title }} – {{ title }}{% endblock %}
+{% block content %}
+  <article>
+    <h1>{{ post.title }}</h1>
+    <p class="date">{{ post.date }}</p>
+    {{ post.body_html }}
+  </article>
+  <p><a href="{{ past_href }}">Past posts</a></p>
+{% endblock %}

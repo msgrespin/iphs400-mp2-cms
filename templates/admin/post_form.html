@@ -12,6 +12,7 @@
     <p><label>Title <input type="text" name="title" value="{{ form_title }}" required></label></p>
     <p><label>Body<br><textarea name="body" rows="12" cols="60">{{ form_body }}</textarea></label></p>
     <button type="submit">{{ "Save" if post else "Save as Draft" }}</button>
+    <button type="submit" formaction="/admin/posts/preview" formtarget="_blank">Preview</button>
   </form>
   {% if post %}
   <form method="post" action="/admin/posts/{{ post.id }}/{{ 'unpublish' if post.status == 'published' else 'publish' }}">
