@@ -270,7 +270,8 @@ def test_local_preview_serves_post_pages_and_past_posts(client, client_as, monke
 
 def test_env_example_sets_the_site_title():
     text = (settings.ROOT / ".env.example").read_text()
-    assert re.search(r"^CMS_SITE_TITLE=AWM at Kenyon$", text, re.MULTILINE)
+    # Quoted, because a .env parser rejects an unquoted value with spaces.
+    assert re.search(r'^CMS_SITE_TITLE="AWM at Kenyon"$', text, re.MULTILINE)
 
 
 def test_preview_page_links_the_public_stylesheet_and_the_console(client_as):
