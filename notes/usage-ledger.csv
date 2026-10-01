@@ -40,3 +40,12 @@ ts,session,phase,provider,model,effort,ctx_pct,five_h_pct,weekly_pct
 2026-10-01T14:39:11Z,8915d99a,tickets,anthropic,Opus 5.5,high,16.0,17,6
 2026-10-01T14:40:13Z,471cc78b,tickets,anthropic,Opus 5.5,high,3.0,18,7
 2026-10-01T14:40:32Z,471cc78b,tickets,anthropic,Opus 5.5,high,3.0,18,7
+2026-10-01T14:42:26Z,471cc78b,tickets,anthropic,Opus 5.5,high,5.0,19,7
+2026-10-01T14:43:06Z,d55082a0,T01,anthropic,Sonnet 5.5,medium,5.0,19,7
+2026-10-01T14:46:13Z,d55082a0,T01,anthropic,Sonnet 5.5,medium,8.0,21,7
+2026-10-01T14:46:31Z,d55082a0,T01,anthropic,Sonnet 5.5,medium,8.0,22,7
+2026-10-01T14:47:21Z,d55082a0,T01,anthropic,Sonnet 5.5,medium,9.0,23,7
+2026-10-01T14:48:17Z,d55082a0,T01,anthropic,Sonnet 5.5,medium,9.0,23,7
+2026-10-01T14:49:01Z,d55082a0,T01,anthropic,Sonnet 5.5,medium,9.0,24,7
+2026-10-01T14:54:05Z,d55082a0,T01,anthropic,Sonnet 5.5,medium,9.0,24,7
+2026-10-01T14:58:24Z,d55082a0,T01,anthropic,Sonnet 5.5,medium,9.0,24,7
