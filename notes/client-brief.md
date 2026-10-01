@@ -10,7 +10,7 @@ Co-VPS are admin. Co-Presidents, Social Chair, and Treasurer are editors. Editor
 
 ## Who is the site for?
 
-The site is for members and curious students. Information on the site is about when and where Study Hall is and how to join. Study Hall is in Hayes on the 3rd floor, every Monday from 8pm to 10pm. We also have a link to a google form for snack requests.
+The site is for members and curious students. Information on the site is about when and where Study Hall is and how to join. Study Hall is in Hayes 311, every Monday from 8pm to 10pm. We also have a link to a google form for snack requests.
 
 ## Issue with the site right now
 
