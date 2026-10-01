@@ -143,9 +143,14 @@ def seed_demo_posts() -> None:
             return
     published = create_post(
         "Study Hall tonight",
-        "Study Hall is **tonight**, 8-10pm in Hayes 311. Bring something to work on.",
+        "Hello everybody!\n\n"
+        "We are CURRENTLY having our study hall tonight from 8-10 in Hayes 311. "
+        "All are welcome and we will have lots of free snacks!\n\n"
+        "Come and say hi!\n\n"
+        "\\- AWM &lt;3",
         author["id"])
     set_status(published, "published")
     create_post("Snack request form is open",
-                "Draft: tell us what snacks you want. Add the form link here.",
+                "Draft: Study Hall is every Monday, 8-10pm in Hayes 311, with free snacks. "
+                "Tell us what snacks you want. Add the form link here.",
                 author["id"])
