@@ -17,6 +17,10 @@ cp .env.example .env
 uv run cms serve        # then open http://localhost:8000/admin  -> "T00: hello admin"
 ```
 
+The app reads settings from the environment and does not load `.env` itself. To
+pick up `.env` (for example `CMS_SITE_TITLE`), publish with
+`uv run --env-file .env cms publish`.
+
 ## What is here
 
 ```text
