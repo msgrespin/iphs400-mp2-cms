@@ -17,9 +17,9 @@ cp .env.example .env
 uv run cms serve        # then open http://localhost:8000/admin  -> "T00: hello admin"
 ```
 
-The app reads settings from the environment and does not load `.env` itself. To
-pick up `.env` (for example `CMS_SITE_TITLE`), publish with
-`uv run --env-file .env cms publish`.
+The app loads `.env` itself (`cms serve`, `publish`, `deploy`, and
+`scripts/seed_demo.py`). A real environment variable overrides the same name in
+`.env`.
 
 ## What is here
 

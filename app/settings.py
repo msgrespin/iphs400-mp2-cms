@@ -4,7 +4,12 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
+from app import envfile
+
 ROOT = Path(__file__).resolve().parents[1]
+# .env fills in anything the real environment leaves unset. CMS_ENV_FILE
+# points elsewhere (the tests use it to keep a developer's .env out).
+envfile.load(os.environ.get("CMS_ENV_FILE", ROOT / ".env"))
 TEMPLATES = ROOT / "templates"
 SITE = ROOT / "site"
 

@@ -24,7 +24,8 @@ def read_env_example() -> dict[str, str]:
 
 
 def run_seed(db_path, env_overrides=None, drop=()):
-    env = {**os.environ, **read_env_example(), "CMS_DATABASE": str(db_path)}
+    env = {**os.environ, **read_env_example(), "CMS_DATABASE": str(db_path),
+           "CMS_ENV_FILE": os.devnull}
     env.update(env_overrides or {})
     for name in drop:
         env.pop(name, None)

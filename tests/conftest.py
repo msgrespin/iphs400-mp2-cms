@@ -11,12 +11,16 @@ Accounts below.
 """
 from __future__ import annotations
 
+import os
 import re
 
 import pytest
 from fastapi.testclient import TestClient
 
-from app import settings
+# Keep a developer's real .env out of the tests; must run before app.settings loads.
+os.environ.setdefault("CMS_ENV_FILE", os.devnull)
+
+from app import settings  # noqa: E402
 from app.main import create_app
 
 # Matches scripts/seed_demo.py. Passwords come from the environment there; in
