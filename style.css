@@ -1,0 +1,7 @@
+/* Public site styles. */
+:root { color-scheme: light dark; }
+body { font: 16px/1.6 system-ui, sans-serif; margin: 0 auto; max-width: 42rem; padding: 1rem; }
+header a { font-weight: 700; text-decoration: none; }
+main { margin-block: 2rem; }
+article { overflow-wrap: anywhere; }
+.date { margin-block: 0 1rem; opacity: 0.75; }
