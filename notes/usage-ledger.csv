@@ -23,3 +23,17 @@ ts,session,phase,provider,model,effort,ctx_pct,five_h_pct,weekly_pct
 2026-10-01T02:00:27Z,4a7118dc,unlabelled,anthropic,Sonnet 5,medium,7.0,19,4
 2026-10-01T02:01:19Z,4a7118dc,unlabelled,anthropic,Sonnet 5,medium,7.0,19,4
 2026-10-01T12:57:00Z,54121e84,unlabelled,anthropic,Sonnet 5,medium,6.0,3,4
+2026-10-01T13:17:45Z,54121e84,unlabelled,anthropic,Sonnet 5,medium,7.0,5,5
+2026-10-01T13:19:25Z,54121e84,unlabelled,anthropic,Sonnet 5,medium,7.0,5,5
+2026-10-01T13:22:45Z,8915d99a,grill,anthropic,Opus 5.5,high,5.0,6,5
+2026-10-01T13:24:57Z,8915d99a,grill,anthropic,Opus 5.5,high,7.0,7,5
+2026-10-01T13:42:34Z,8915d99a,grill,anthropic,Opus 5.5,high,8.0,7,5
+2026-10-01T13:49:00Z,8915d99a,grill,anthropic,Opus 5.5,high,9.0,8,5
+2026-10-01T13:54:00Z,8915d99a,grill,anthropic,Opus 5.5,high,10.0,9,5
+2026-10-01T13:56:36Z,8915d99a,grill,anthropic,Opus 5.5,high,10.0,9,5
+2026-10-01T14:11:35Z,8915d99a,spec,anthropic,Opus 5.5,high,12.0,10,5
+2026-10-01T14:17:23Z,8915d99a,spec,anthropic,Opus 5.5,high,12.0,11,6
+2026-10-01T14:23:06Z,8915d99a,spec,anthropic,Opus 5.5,high,12.0,13,6
+2026-10-01T14:27:20Z,8915d99a,tickets,anthropic,Opus 5.5,high,13.0,14,6
+2026-10-01T14:36:33Z,8915d99a,tickets,anthropic,Opus 5.5,high,16.0,17,6
+2026-10-01T14:38:11Z,8915d99a,tickets,anthropic,Opus 5.5,high,16.0,17,6

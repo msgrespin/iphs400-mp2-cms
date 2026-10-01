@@ -14,7 +14,7 @@ The site is for members and curious students. Information on the site is about w
 
 ## Issue with the site right now
 
-The old site means editing raw HTML. The time and place is in 3 files. The weekly email is currently our only form of communication.
+The old site means editing raw HTML. The old site is only HTML local files on a laptop. It was never put online, so people who aren't on the email list can't find anything yet. The time and place is in 3 files. The weekly email is currently our only form of communication.
 
 ## What would make this better?
 
