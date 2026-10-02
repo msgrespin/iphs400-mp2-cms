@@ -1,5 +1,6 @@
 """The shared Jinja environment."""
 from fastapi import Request
+from jinja2 import pass_context
 from fastapi.templating import Jinja2Templates
 
 from app import accounts, content, settings
@@ -17,4 +18,14 @@ def console_account(request: Request) -> dict:
 
 templates = Jinja2Templates(directory=str(settings.TEMPLATES),
                             context_processors=[console_account])
+
+
+@pass_context
+def url_for(context, name: str, **path_params) -> str:
+    """The path of a named route, e.g. "/admin/posts". Unlike Starlette's own url_for,
+    this has no scheme or host, so links stay the same as when they were typed by hand."""
+    return str(context["request"].app.url_path_for(name, **path_params))
+
+
+templates.env.globals["url_for"] = url_for
 templates.env.globals["eastern"] = content.eastern

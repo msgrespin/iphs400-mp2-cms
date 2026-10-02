@@ -11,9 +11,9 @@
   {% if console_account %}
   <nav aria-label="Console">
     <ul>
-      <li><a href="/admin">Dashboard</a></li>
-      <li><a href="/admin/content">Content</a></li>
-      <li><a href="/admin/posts/new">New Post</a></li>
+      <li><a href="{{ url_for('console_dashboard') }}">Dashboard</a></li>
+      <li><a href="{{ url_for('console_content') }}">Content</a></li>
+      <li><a href="{{ url_for('post_new') }}">New Post</a></li>
       <li>{{ console_account.display_name }}</li>
       <li>
         <form method="post" action="/logout">

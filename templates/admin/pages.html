@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
-  <p><a href="/admin">Console</a> · <a href="/admin/posts">Posts</a></p>
+  <p><a href="{{ url_for('console_dashboard') }}">Console</a> · <a href="{{ url_for('posts_list') }}">Posts</a></p>
   <h1>Pages</h1>
   {% include "admin/_flash.html" %}
-  {% if account.role == "admin" %}<p><a href="/admin/pages/new">Create a new Page</a></p>{% endif %}
+  {% if account.role == "admin" %}<p><a href="{{ url_for('page_new') }}">Create a new Page</a></p>{% endif %}
   <table>
     <thead><tr><th>Title</th><th>Status</th><th>Author</th><th>Link</th><th>Updated</th><th></th></tr></thead>
     <tbody>
     {% for page in pages %}
       <tr>
-        <td><a href="/admin/pages/{{ page.id }}/edit">{{ page.title }}</a></td>
+        <td><a href="{{ url_for('page_edit', page_id=page.id) }}">{{ page.title }}</a></td>
         <td>{{ "Published" if page.status == "published" else "Draft" }}</td>
         <td>{{ page.author or "—" }}</td>
         <td><code>{{ page.link }}</code></td>
@@ -23,7 +23,7 @@
             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
             <button type="submit">{{ "Set back to Draft" if page.status == "published" else "Publish" }}</button>
           </form>
-          <a href="/admin/pages/{{ page.id }}/delete">Delete</a>
+          <a href="{{ url_for('page_delete_confirm', page_id=page.id) }}">Delete</a>
           {% endif %}
         {% endif %}
         </td>

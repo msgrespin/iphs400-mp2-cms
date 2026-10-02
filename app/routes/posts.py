@@ -40,12 +40,12 @@ def form_error(request: Request, template: str, post, title: str, body: str):
                   form_body=body, error="A Post needs a title.")
 
 
-@router.get("", response_class=HTMLResponse)
+@router.get("", response_class=HTMLResponse, name="posts_list")
 def list_posts(request: Request):
     return render(request, "admin/posts.html", posts=content.list_posts())
 
 
-@router.get("/new", response_class=HTMLResponse)
+@router.get("/new", response_class=HTMLResponse, name="post_new")
 def new_post(request: Request):
     return render(request, "admin/post_form.html", post=None, form_title="",
                   form_body="", error="")
@@ -70,7 +70,7 @@ def preview_post(request: Request, title: str = Form(""), body: str = Form("")):
                   rendered=markdown.render(body), css_path="/style.css")
 
 
-@router.get("/{post_id}/edit", response_class=HTMLResponse)
+@router.get("/{post_id}/edit", response_class=HTMLResponse, name="post_edit")
 def edit_post(request: Request, post_id: int):
     post = found(post_id)
     return render(request, "admin/post_form.html", post=post, form_title=post["title"],
@@ -104,7 +104,8 @@ def unpublish_post(request: Request, post_id: int):
     return RedirectResponse(LIST_URL, status_code=303)
 
 
-@router.get("/{post_id}/delete", response_class=HTMLResponse)
+@router.get("/{post_id}/delete", response_class=HTMLResponse,
+            name="post_delete_confirm")
 def confirm_delete(request: Request, post_id: int):
     return render(request, "admin/post_delete.html", post=found(post_id))
 

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-  <p><a href="/admin/pages">Pages</a></p>
+  <p><a href="{{ url_for('pages_list') }}">Pages</a></p>
   <h1>{{ "Edit Page" if page else "New Page" }}</h1>
   {% include "admin/_flash.html" %}
   {% if page %}
@@ -23,6 +23,6 @@
     <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
     <button type="submit">{{ "Set back to Draft" if page.status == "published" else "Publish" }}</button>
   </form>
-  <p><a href="/admin/pages/{{ page.id }}/delete">Delete this Page</a></p>
+  <p><a href="{{ url_for('page_delete_confirm', page_id=page.id) }}">Delete this Page</a></p>
   {% endif %}
 {% endblock %}

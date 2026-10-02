@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-  <p><a href="/admin/posts">Posts</a></p>
+  <p><a href="{{ url_for('posts_list') }}">Posts</a></p>
   <h1>{{ "Edit Post" if post else "New Post" }}</h1>
   {% include "admin/_flash.html" %}
   {% if post %}
@@ -19,6 +19,6 @@
     <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
     <button type="submit">{{ "Set back to Draft" if post.status == "published" else "Publish" }}</button>
   </form>
-  <p><a href="/admin/posts/{{ post.id }}/delete">Delete this Post</a></p>
+  <p><a href="{{ url_for('post_delete_confirm', post_id=post.id) }}">Delete this Post</a></p>
   {% endif %}
 {% endblock %}

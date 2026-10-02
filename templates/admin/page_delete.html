@@ -5,6 +5,6 @@
   <form method="post" action="/admin/pages/{{ page.id }}/delete">
     <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
     <button type="submit">Yes, delete it</button>
-    <a href="/admin/pages/{{ page.id }}/edit">Cancel</a>
+    <a href="{{ url_for('page_edit', page_id=page.id) }}">Cancel</a>
   </form>
 {% endblock %}

@@ -52,12 +52,13 @@ def form_screen(request: Request, account, page, title: str, body: str,
                   page=page, form_title=title, form_body=body, error=error)
 
 
-@router.get("", response_class=HTMLResponse)
+@router.get("", response_class=HTMLResponse, name="pages_list")
 def list_pages(request: Request, account=Depends(accounts.require_account)):
     return list_screen(request, account)
 
 
-@router.get("/new", response_class=HTMLResponse, dependencies=[Depends(accounts.require_admin)])
+@router.get("/new", response_class=HTMLResponse, name="page_new",
+            dependencies=[Depends(accounts.require_admin)])
 def new_page(request: Request, account=Depends(accounts.require_account)):
     return form_screen(request, account, None, "", "")
 
@@ -81,7 +82,7 @@ def preview_page(request: Request, title: str = Form(""), body: str = Form(""),
                   rendered=markdown.render(body), css_path="/style.css")
 
 
-@router.get("/{page_id}/edit", response_class=HTMLResponse)
+@router.get("/{page_id}/edit", response_class=HTMLResponse, name="page_edit")
 def edit_page(request: Request, page_id: int, account=Depends(accounts.require_account)):
     page = found(page_id)
     return form_screen(request, account, page, page["title"], page["body"])
@@ -119,7 +120,7 @@ def unpublish_page(request: Request, page_id: int, account=Depends(accounts.requ
 
 
 @router.get("/{page_id}/delete", response_class=HTMLResponse,
-            dependencies=[Depends(accounts.require_admin)])
+            name="page_delete_confirm", dependencies=[Depends(accounts.require_admin)])
 def confirm_delete(request: Request, page_id: int, account=Depends(accounts.require_account)):
     page = found(page_id)
     if page["is_home"]:

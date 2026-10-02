@@ -18,12 +18,12 @@ def render(request: Request, template: str, title: str, **context):
          "flash": request.session.pop("flash", ""), **context})
 
 
-@router.get("", response_class=HTMLResponse)
+@router.get("", response_class=HTMLResponse, name="console_dashboard")
 def dashboard(request: Request):
     return render(request, "admin/dashboard.html", "Dashboard", counts=content.counts())
 
 
-@router.get("/content", response_class=HTMLResponse)
+@router.get("/content", response_class=HTMLResponse, name="console_content")
 def content_list(request: Request, status: str = "", type: str = ""):
     status = status if status in ("draft", "published") else ""
     kind = type if type in ("post", "page") else ""
