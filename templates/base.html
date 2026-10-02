@@ -8,6 +8,22 @@
 </head>
 <body>
   <header><a href="{{ home_path | default('index.html') }}">{{ title }}</a></header>
+  {% if console_account %}
+  <nav aria-label="Console">
+    <ul>
+      <li><a href="/admin">Dashboard</a></li>
+      <li><a href="/admin/content">Content</a></li>
+      <li><a href="/admin/posts/new">New Post</a></li>
+      <li>{{ console_account.display_name }}</li>
+      <li>
+        <form method="post" action="/logout">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <button type="submit">Sign out</button>
+        </form>
+      </li>
+    </ul>
+  </nav>
+  {% endif %}
   {% if nav %}
   <nav aria-label="Site">
     <ul>

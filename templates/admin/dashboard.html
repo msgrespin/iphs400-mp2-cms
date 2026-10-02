@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Dashboard</h1>
+  {% include "admin/_flash.html" %}
+  <dl class="counts">
+    <div><dt>Draft Posts</dt> <dd>{{ counts.draft_posts }}</dd></div>
+    <div><dt>Published Posts</dt> <dd>{{ counts.published_posts }}</dd></div>
+    <div><dt>Pages</dt> <dd>{{ counts.pages }}</dd></div>
+  </dl>
+  <p><a href="/admin/content">See all content</a> · <a href="/admin/posts">Posts</a> · <a href="/admin/pages">Pages</a></p>
+{% endblock %}

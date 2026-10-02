@@ -25,6 +25,9 @@ header a { font-weight: 700; text-decoration: none; }
 nav ul { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; list-style: none; margin: 0.5rem 0 0; padding: 0; }
 main { margin-block: 2rem; }
 article { overflow-wrap: anywhere; }
+nav form { display: inline; margin: 0; }
+.table-wrap { overflow-x: auto; }
+td, th { overflow-wrap: anywhere; text-align: left; padding: 0.25rem 0.5rem; }
 .date { margin-block: 0 1rem; opacity: 0.75; }
 """
 

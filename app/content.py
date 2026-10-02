@@ -273,6 +273,42 @@ def delete_page(page_id: int) -> bool:
         return conn.execute("delete from pages where id = ?", (page_id,)).rowcount == 1
 
 
+# --- Dashboard and content list --------------------------------------------
+
+def counts() -> dict[str, int]:
+    """The dashboard numbers: Draft Posts, Published Posts, and Pages."""
+    init_db()
+    with connect() as conn:
+        by_status = dict(conn.execute("select status, count(*) from posts group by status"))
+        pages = conn.execute("select count(*) from pages").fetchone()[0]
+    return {"draft_posts": by_status.get("draft", 0),
+            "published_posts": by_status.get("published", 0), "pages": pages}
+
+
+def list_items(status: str | None = None, kind: str | None = None) -> list[dict]:
+    """Posts and Pages together, most recently updated first.
+
+    `status` is 'draft' or 'published' and `kind` is 'post' or 'page'; None means
+    no filter on that.
+    """
+    init_db()
+    wanted = [(k, table, select) for k, table, select in
+              (("post", "posts", _SELECT), ("page", "pages", _PAGE_SELECT))
+              if kind in (None, k)]
+    items: list[dict] = []
+    with connect() as conn:
+        for k, table, select in wanted:
+            where, args = "", ()
+            if status:
+                where, args = f" where {table}.status = ?", (status,)
+            for row in conn.execute(select + where, args):
+                items.append({"kind": k, "id": row["id"], "title": row["title"],
+                              "status": row["status"], "author": row["author"],
+                              "updated_at": row["updated_at"]})
+    items.sort(key=lambda i: (i["updated_at"], i["id"]), reverse=True)
+    return items
+
+
 def seed_demo_pages() -> None:
     """Create About and Join & Snacks as Published Pages (Home already exists).
 

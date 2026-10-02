@@ -14,7 +14,7 @@ Do not fork: a fork arrives without an Issues tab, and your tickets live in Issu
 ```bash
 uv sync
 cp .env.example .env
-uv run cms serve        # then open http://localhost:8000/admin  -> "T00: hello admin"
+uv run cms serve        # then open http://localhost:8000/admin  -> the dashboard
 ```
 
 The app loads `.env` itself (`cms serve`, `publish`, `deploy`, and

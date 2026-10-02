@@ -12,7 +12,7 @@ def test_admin_console_answers(client, client_as):
 
     signed_in = client_as("admin").get("/admin")
     assert signed_in.status_code == 200
-    assert "hello admin" in signed_in.text.lower()
+    assert "dashboard" in signed_in.text.lower()
 
 
 def test_public_home_answers(client):

@@ -14,7 +14,7 @@ from fastapi.responses import HTMLResponse, Response
 from starlette.middleware.sessions import SessionMiddleware
 
 from app import accounts, content, publish, settings
-from app.routes import auth, pages, posts
+from app.routes import auth, console, pages, posts
 from app.templating import templates
 
 
@@ -28,6 +28,7 @@ def create_app() -> FastAPI:
                        session_cookie="session", max_age=None,
                        same_site="lax", https_only=False)
     app.include_router(auth.router)
+    app.include_router(console.router)
     app.include_router(posts.router)
     app.include_router(pages.router)
 

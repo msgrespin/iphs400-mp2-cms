@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Content</h1>
+  {% include "admin/_flash.html" %}
+  <form method="get" action="/admin/content">
+    <label>Status
+      <select name="status">
+        <option value="">All</option>
+        <option value="draft"{% if status == "draft" %} selected{% endif %}>Draft</option>
+        <option value="published"{% if status == "published" %} selected{% endif %}>Published</option>
+      </select>
+    </label>
+    <label>Type
+      <select name="type">
+        <option value="">All</option>
+        <option value="post"{% if kind == "post" %} selected{% endif %}>Posts</option>
+        <option value="page"{% if kind == "page" %} selected{% endif %}>Pages</option>
+      </select>
+    </label>
+    <button type="submit">Filter</button>
+  </form>
+  {% if items %}
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Title</th><th>Type</th><th>Status</th><th>Author</th><th>Updated</th></tr></thead>
+    <tbody>
+    {% for item in items %}
+      <tr>
+        <td><a href="/admin/{{ 'posts' if item.kind == 'post' else 'pages' }}/{{ item.id }}/edit">{{ item.title }}</a></td>
+        <td>{{ "Post" if item.kind == "post" else "Page" }}</td>
+        <td>{{ "Published" if item.status == "published" else "Draft" }}</td>
+        <td>{{ item.author or "—" }}</td>
+        <td>{{ eastern(item.updated_at) }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  {% else %}
+  <p>Nothing here. No content matches that filter.</p>
+  {% endif %}
+{% endblock %}

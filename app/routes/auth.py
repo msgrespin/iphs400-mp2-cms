@@ -38,11 +38,3 @@ def login(request: Request, email: str = Form(""), password: str = Form("")):
 def logout(request: Request):
     accounts.sign_out(request)
     return RedirectResponse("/login", status_code=303)
-
-
-@router.get("/admin", response_class=HTMLResponse)
-def admin_home(request: Request, account=Depends(accounts.require_account)):
-    return templates.TemplateResponse(
-        request, "admin/hello.html",
-        {"title": "Admin", "home_path": "/admin", "account": account,
-         "csrf_token": accounts.csrf_token(request)})
