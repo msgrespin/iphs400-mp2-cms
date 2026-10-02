@@ -59,12 +59,97 @@ def init_db() -> None:
         conn.execute(SCHEMA)
 
 
+class AccountProblem(Exception):
+    """An Accounts action was refused; the message says why, in plain words."""
+
+
+class NotFound(AccountProblem):
+    pass
+
+
+ROLES = ("admin", "editor")
+LAST_ADMIN = "That is the last active Admin. Make another Account an active Admin first."
+
+
 def create_account(email: str, display_name: str, password: str, role: str) -> None:
+    email, display_name = email.strip().lower(), display_name.strip()
+    if not (email and display_name and password):
+        raise AccountProblem("Position name, email, and password are all required.")
+    if role not in ROLES:
+        raise AccountProblem("Role must be Admin or Editor.")
     with connect() as conn:
-        conn.execute(
-            "insert into accounts (email, display_name, password_hash, role)"
-            " values (?, ?, ?, ?)",
-            (email.strip().lower(), display_name, _hasher.hash(password), role))
+        if conn.execute("select 1 from accounts where email = ?", (email,)).fetchone():
+            raise AccountProblem(f"An Account with the email {email} already exists.")
+        try:
+            conn.execute(
+                "insert into accounts (email, display_name, password_hash, role)"
+                " values (?, ?, ?, ?)",
+                (email, display_name, _hasher.hash(password), role))
+        except sqlite3.IntegrityError:  # another request created it just now
+            raise AccountProblem(f"An Account with the email {email} already exists.")
+
+
+def list_accounts() -> list[sqlite3.Row]:
+    with connect() as conn:
+        return conn.execute("select * from accounts order by id").fetchall()
+
+
+def _target(conn: sqlite3.Connection, account_id: int) -> sqlite3.Row:
+    try:
+        account = conn.execute("select * from accounts where id = ?", (account_id,)).fetchone()
+    except OverflowError:  # an id too big for SQLite cannot exist
+        account = None
+    if account is None:
+        raise NotFound("No such Account.")
+    return account
+
+
+def _other_active_admins(conn: sqlite3.Connection, account_id: int) -> int:
+    return conn.execute("select count(*) from accounts"
+                        " where role = 'admin' and active = 1 and id != ?",
+                        (account_id,)).fetchone()[0]
+
+
+def set_role(account_id: int, role: str) -> sqlite3.Row:
+    if role not in ROLES:
+        raise AccountProblem("Role must be Admin or Editor.")
+    with connect() as conn:
+        conn.execute("begin immediate")  # hold the write lock from the check to the update
+        account = _target(conn, account_id)
+        if (role != "admin" and account["role"] == "admin" and account["active"]
+                and not _other_active_admins(conn, account_id)):
+            raise AccountProblem(LAST_ADMIN)
+        conn.execute("update accounts set role = ? where id = ?", (role, account_id))
+        return account
+
+
+def set_password(account_id: int, password: str) -> sqlite3.Row:
+    if not password:
+        raise AccountProblem("A new password is required.")
+    with connect() as conn:
+        account = _target(conn, account_id)
+        conn.execute("update accounts set password_hash = ? where id = ?",
+                     (_hasher.hash(password), account_id))
+        return account
+
+
+def deactivate(account_id: int) -> sqlite3.Row:
+    """Accounts are deactivated, never deleted, so their Posts stay on the site."""
+    with connect() as conn:
+        conn.execute("begin immediate")  # hold the write lock from the check to the update
+        account = _target(conn, account_id)
+        if (account["role"] == "admin" and account["active"]
+                and not _other_active_admins(conn, account_id)):
+            raise AccountProblem(LAST_ADMIN)
+        conn.execute("update accounts set active = 0 where id = ?", (account_id,))
+        return account
+
+
+def reactivate(account_id: int) -> sqlite3.Row:
+    with connect() as conn:
+        account = _target(conn, account_id)
+        conn.execute("update accounts set active = 1 where id = ?", (account_id,))
+        return account
 
 
 def seed_demo_accounts(admin_password: str, editor_password: str) -> None:

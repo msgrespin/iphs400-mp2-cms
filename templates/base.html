@@ -14,6 +14,7 @@
       <li><a href="{{ url_for('console_dashboard') }}">Dashboard</a></li>
       <li><a href="{{ url_for('console_content') }}">Content</a></li>
       <li><a href="{{ url_for('post_new') }}">New Post</a></li>
+      {% if console_account.role == "admin" %}<li><a href="{{ url_for('accounts_list') }}">Accounts</a></li>{% endif %}
       <li>{{ console_account.display_name }}</li>
       <li>
         <form method="post" action="/logout">

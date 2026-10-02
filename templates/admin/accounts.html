@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Accounts</h1>
+  {% include "admin/_flash.html" %}
+  <table>
+    <thead><tr><th>Position</th><th>Email</th><th>Role</th><th>Status</th><th>Change Role</th><th>New password</th><th></th></tr></thead>
+    <tbody>
+    {% for a in accounts %}
+      <tr>
+        <td>{{ a.display_name }}</td>
+        <td>{{ a.email }}</td>
+        <td>{{ "Admin" if a.role == "admin" else "Editor" }}</td>
+        <td>{{ "Active" if a.active else "Deactivated" }}</td>
+        <td>
+          <form method="post" action="{{ url_for('accounts_list') }}/{{ a.id }}/role">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <label>Role for {{ a.display_name }}
+              <select name="role">
+                <option value="admin" {{ "selected" if a.role == "admin" }}>Admin</option>
+                <option value="editor" {{ "selected" if a.role == "editor" }}>Editor</option>
+              </select>
+            </label>
+            <button type="submit">Change Role</button>
+          </form>
+        </td>
+        <td>
+          <form method="post" action="{{ url_for('accounts_list') }}/{{ a.id }}/password">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <label>New password for {{ a.display_name }}
+              <input type="password" name="password" autocomplete="new-password" required>
+            </label>
+            <button type="submit">Set password</button>
+          </form>
+        </td>
+        <td>
+          <form method="post" action="{{ url_for('accounts_list') }}/{{ a.id }}/{{ 'deactivate' if a.active else 'reactivate' }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <button type="submit">{{ "Deactivate" if a.active else "Reactivate" }}</button>
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  <h2>Create an Account</h2>
+  <form method="post" action="{{ url_for('accounts_list') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <p><label>Position name <input name="display_name" value="{{ form.display_name }}" required></label></p>
+    <p><label>Email <input type="email" name="email" value="{{ form.email }}" required></label></p>
+    <p><label>Role
+      <select name="role">
+        <option value="editor" {{ "selected" if form.role != "admin" }}>Editor</option>
+        <option value="admin" {{ "selected" if form.role == "admin" }}>Admin</option>
+      </select>
+    </label></p>
+    <p><label>Password <input type="password" name="password" autocomplete="new-password" required></label></p>
+    <button type="submit">Create Account</button>
+  </form>
+{% endblock %}

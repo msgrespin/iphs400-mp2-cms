@@ -14,7 +14,7 @@ from fastapi.responses import HTMLResponse, Response
 from starlette.middleware.sessions import SessionMiddleware
 
 from app import accounts, content, publish, settings
-from app.routes import auth, console, pages, posts
+from app.routes import accounts as accounts_routes, auth, console, pages, posts
 from app.templating import templates
 
 
@@ -31,6 +31,7 @@ def create_app() -> FastAPI:
     app.include_router(console.router)
     app.include_router(posts.router)
     app.include_router(pages.router)
+    app.include_router(accounts_routes.router)
 
     @app.exception_handler(accounts.NoPermission)
     def no_permission(request: Request, exc: accounts.NoPermission):
