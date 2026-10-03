@@ -2,6 +2,7 @@
 {% block content %}
   <h1>Accounts</h1>
   {% include "admin/_flash.html" %}
+  <div class="table-wrap">
   <table>
     <thead><tr><th>Position</th><th>Email</th><th>Role</th><th>Status</th><th>Change Role</th><th>New password</th><th></th></tr></thead>
     <tbody>
@@ -42,6 +43,7 @@
     {% endfor %}
     </tbody>
   </table>
+  </div>
 
   <h2>Create an Account</h2>
   <form method="post" action="{{ url_for('accounts_list') }}">

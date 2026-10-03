@@ -27,8 +27,10 @@ main { margin-block: 2rem; }
 article { overflow-wrap: anywhere; }
 nav form { display: inline; margin: 0; }
 .table-wrap { overflow-x: auto; }
-td, th { overflow-wrap: anywhere; text-align: left; padding: 0.25rem 0.5rem; }
+td, th { overflow-wrap: break-word; text-align: left; padding: 0.25rem 0.5rem; }
 .date { margin-block: 0 1rem; opacity: 0.75; }
+textarea { box-sizing: border-box; max-width: 100%; width: 100%; }
+main p { overflow-wrap: anywhere; }
 """
 
 
