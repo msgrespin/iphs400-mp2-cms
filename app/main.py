@@ -67,9 +67,6 @@ def create_app() -> FastAPI:
             raise HTTPException(status_code=404, detail="No such Post.")
         return page
 
-    # Your ticket work plugs in here, e.g.
-    #   from app.routes import posts
-    #   app.include_router(posts.router)
     return app
 
 
